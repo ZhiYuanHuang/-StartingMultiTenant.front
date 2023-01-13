@@ -101,7 +101,7 @@ export const dataProvider = {
             method: 'DELETE',
             mode: 'cors',
             body: JSON.stringify({
-                data: params.data
+                data: params.id
             }),
         }).then(response => {
             return response.json;
@@ -133,6 +133,41 @@ export const dataProvider = {
             };
         });
     },
+    update:(resource,params)=>{
+        const url = `${dataBaseUrl}/api/${resource}/update`;
+        return httpClient(url,{
+            method:'PUT',
+            mode:'cors',
+            body:JSON.stringify({
+                data:params.data
+            })
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return {
+                data: json.result
+            };
+        });
+    },
+    getApiClientScopes:(resource,params)=>{
+        const url = `${dataBaseUrl}/api/${resource}/get?id=${params.id}`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            console.info(json.result);
+            return { data: json.result };
+        });
+    },
+
 };
 function getFilterContent(params: any) {
     if (typeof params.filter === "undefined" || params.filter === null) {
