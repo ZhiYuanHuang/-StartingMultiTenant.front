@@ -153,7 +153,7 @@ export const dataProvider = {
         });
     },
     getApiClientScopes:(resource,params)=>{
-        const url = `${dataBaseUrl}/api/${resource}/get?id=${params.id}`;
+        const url = `${dataBaseUrl}/api/${resource}/GetWithScopes?id=${params.id}`;
         return httpClient(url, {
             method: 'GET',
             mode: 'cors',
@@ -165,6 +165,39 @@ export const dataProvider = {
             }
             console.info(json.result);
             return { data: json.result };
+        });
+    },
+    getApiScopes:(resource,params)=>{
+        const url = `${dataBaseUrl}/api/${resource}/getall`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return { data: json.resultList };
+        });
+    },
+    authorizeApiClient:(params)=>{
+        const url = `${dataBaseUrl}/api/apiclient/authorize`;
+        return httpClient(url,{
+            method:'PUT',
+            mode:'cors',
+            body:JSON.stringify({
+                data:params.data
+            })
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return {
+                data: json.result
+            };
         });
     },
 

@@ -1,8 +1,10 @@
-import { List, Datagrid, TextField, TextInput, SimpleForm, Create, PasswordInput, Edit, EditButton, useRecordContext, FunctionField, WrapperField, Button, CustomRoutes, Resource, Admin, Title, useRedirect, EditBase, SelectInput, RecordContextProvider, useGetOne, useDataProvider, Loading,Error  } from 'react-admin';
-import { Route,useParams } from "react-router-dom";
-import { useQuery } from 'react-query';
+import { List, Datagrid, TextField, TextInput, SimpleForm, Create, PasswordInput, Edit, EditButton, useRecordContext, FunctionField, WrapperField, Button, CustomRoutes, Resource, Admin, Title, useRedirect, EditBase, SelectInput, RecordContextProvider, useGetOne, useDataProvider, Loading, Error, SelectArrayInput, useNotify, useUpdate } from 'react-admin';
+import { Route, useParams,useNavigate } from "react-router-dom";
+import { useQuery, useMutation } from 'react-query';
 import { TenantList } from './tenants';
 import { Card, CardContent } from '@mui/material';
+import { useState } from 'react';
+import { dataProvider } from './dataProvider';
 
 const filters = [
     <TextInput source="clientId" label="Search" alwaysOn></TextInput>
@@ -46,29 +48,73 @@ export const ApiClientModifySecret = () => (
 );
 
 export const ApiClientAuthorize = () => {
+
     let params = useParams();
-    const id=params.id;
+    const id = params.id;
     const dataProvider = useDataProvider();
     const { data, isLoading, error } = useQuery(
-        ['apiclient', 'getApiClientScopes', { id: id }], 
+        ['apiclient', 'getApiClientScopes', { id: id }],
         () => dataProvider.getApiClientScopes('apiclient', { id: id })
     );
+
+    const {mutate, isLoading: isSubmitting } = useMutation(
+        //['authorizeApiClient', { id: id }],
+         (formData)=>dataProvider.authorizeApiClient(formData)
+    );
+//     const [update, { isLoading: isSubmitting }] = useUpdate();
+  const navigate = useNavigate();
+  const onSubmit = (formData) => {
+    mutate(
+        {data:formData},
+        { onSuccess: () => { navigate('/apiclient'); } }
+    );
+  };
+
+    // const { mutate  } = useMutation(
+    //     ['authorizeApiClient', { ...data.data }],
+    //     () => dataProvider.authorizeApiClient({ ...data.data })
+    // );
 
     if (isLoading) return <Loading />;
     if (error) return <Error />;
     if (!data) return null;
 
     //const { data, isLoading, error } = useGetOne('apiclient', { id });
-    return(
+    //const navigate = useNavigate();
+    
+    return (
         <div>
-            <Title title="Book Edition" />
+            <Title title="ApiClient Authorize" />
             <Card>
-                <SimpleForm record={data.data}>
+                <SimpleForm record={data.data} onSubmit={onSubmit}>
                     <TextInput source="clientId" disabled></TextInput>
-                    
+                    <ScopeSelectForm></ScopeSelectForm>
+                    {/* <SelectArrayInput label="scopes" source="scopes" choices={[
+                { id: 'read', name: 'read' },
+                { id: 'write', name: 'write' },
+                { id: 'ss', name: 'ss' },
+            ]} /> */}
                 </SimpleForm>
             </Card>
         </div>
+    );
+};
+
+const ScopeSelectForm = () => {
+    const dataProvider = useDataProvider();
+    const { data, isLoading, error } = useQuery(
+        ['apiscope', 'getApiScopes'],
+        () => dataProvider.getApiScopes('apiscope')
+    );
+
+    if (isLoading) return <SelectArrayInput label="scopes" source="scopes" disabled />;
+    if (error) return null;
+    if (!data) return null;
+
+    const choices = data.data.map(value => ({ id: value.name, name: value.name }));
+
+    return (
+        <SelectArrayInput label="scopes" source="scopes" choices={choices} />
     );
 };
 
