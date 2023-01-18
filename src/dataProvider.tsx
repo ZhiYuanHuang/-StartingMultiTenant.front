@@ -3,13 +3,14 @@ import { stringify } from "query-string";
 import { appResponseDto, pagingDataDto } from "./generalClass";
 
 const envLists = import.meta.env
-const dataBaseUrl = envLists.VITE_dataBaseUrl
+export const DataBaseUrl = envLists.VITE_dataBaseUrl
 
 const fetchJson = (url, options = {}) => {
     options.user = {
         authenticated: true,
         token: 'Bearer ' + localStorage.getItem('token')
     };
+
     return fetchUtils.fetchJson(url, options);
 };
 
@@ -27,7 +28,7 @@ export const dataProvider = {
 
         };
 
-        const url = `${dataBaseUrl}/api/${resource}/getlist`;
+        const url = `${DataBaseUrl}/api/${resource}/getlist`;
         return httpClient(url, {
             method: 'POST',
             mode: 'cors',
@@ -47,7 +48,7 @@ export const dataProvider = {
         });
     },
     getOne: (resource, params) =>
-        httpClient(`${dataBaseUrl}/api/${resource}/get?id=${params.id}`, {
+        httpClient(`${DataBaseUrl}/api/${resource}/get?id=${params.id}`, {
             method: 'GET',
             mode: 'cors',
         }).then(response => {
@@ -58,13 +59,13 @@ export const dataProvider = {
             }
             return { data: json.result };
         }),
-    getMany: (resource, params) =>{
+    getMany: (resource, params) => {
 
 
-        return  httpClient(`${dataBaseUrl}/api/${resource}/getmany`, {
+        return httpClient(`${DataBaseUrl}/api/${resource}/getmany`, {
             method: 'POST',
             mode: 'cors',
-            body:JSON.stringify({
+            body: JSON.stringify({
                 data: [...params.ids]
             }),
         }).then(response => {
@@ -77,7 +78,7 @@ export const dataProvider = {
         });
     },
     create: (resource, params) => {
-        const url = `${dataBaseUrl}/api/${resource}/Add`;
+        const url = `${DataBaseUrl}/api/${resource}/Add`;
         return httpClient(url, {
             method: 'POST',
             mode: 'cors',
@@ -96,7 +97,7 @@ export const dataProvider = {
         }));
     },
     delete: (resource, params) => {
-        const url = `${dataBaseUrl}/api/${resource}/delete`;
+        const url = `${DataBaseUrl}/api/${resource}/delete`;
         return httpClient(url, {
             method: 'DELETE',
             mode: 'cors',
@@ -115,7 +116,7 @@ export const dataProvider = {
         });
     },
     deleteMany: (resource, params) => {
-        const url = `${dataBaseUrl}/api/${resource}/deletemany`;
+        const url = `${DataBaseUrl}/api/${resource}/deletemany`;
         return httpClient(url, {
             method: 'DELETE',
             mode: 'cors',
@@ -133,13 +134,13 @@ export const dataProvider = {
             };
         });
     },
-    update:(resource,params)=>{
-        const url = `${dataBaseUrl}/api/${resource}/update`;
-        return httpClient(url,{
-            method:'PUT',
-            mode:'cors',
-            body:JSON.stringify({
-                data:params.data
+    update: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/update`;
+        return httpClient(url, {
+            method: 'PUT',
+            mode: 'cors',
+            body: JSON.stringify({
+                data: params.data
             })
         }).then(response => {
             return response.json;
@@ -152,8 +153,8 @@ export const dataProvider = {
             };
         });
     },
-    getApiClientScopes:(resource,params)=>{
-        const url = `${dataBaseUrl}/api/${resource}/GetWithScopes?id=${params.id}`;
+    getApiClientScopes: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/GetWithScopes?id=${params.id}`;
         return httpClient(url, {
             method: 'GET',
             mode: 'cors',
@@ -167,8 +168,8 @@ export const dataProvider = {
             return { data: json.result };
         });
     },
-    getApiScopes:(resource,params)=>{
-        const url = `${dataBaseUrl}/api/${resource}/getall`;
+    getApiScopes: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/getall`;
         return httpClient(url, {
             method: 'GET',
             mode: 'cors',
@@ -181,13 +182,62 @@ export const dataProvider = {
             return { data: json.resultList };
         });
     },
-    authorizeApiClient:(params)=>{
-        const url = `${dataBaseUrl}/api/apiclient/authorize`;
-        return httpClient(url,{
-            method:'PUT',
-            mode:'cors',
-            body:JSON.stringify({
-                data:params.data
+    getDbInfoByService: (resource, params) => {
+        const url = `${DataBaseUrl}/api/dbinfo/GetDbInfosByService?serviceInfoId=${params.id}`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return { data: json.resultList };
+        });
+    },
+    getDbScriptContent: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/GetScriptContent?scriptId=${params.id}`;
+
+        return fetch(url,{
+            method: 'GET',
+            mode: 'cors',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            })
+        }).then(response=>{
+            if(response.status!=200){
+                throw new Error(response.statusText);
+            }
+            return response.blob();
+        }).then(blob=>{
+            
+            return blob;
+        });
+        
+        // return httpClient(url, {
+        //     method: 'GET',
+        //     mode: 'cors',
+        //     responseType: 'blob',
+        // }).then(response => {
+        //     console.log(result)
+
+        //     // 需要指定文件类型，谷歌浏览器不能打开xlsx、doc等等
+
+        //     var blob = new Blob([result], {
+
+        //         type: "application/pdf;chartset=UTF-8"
+
+        //     });
+        // });
+    },
+    authorizeApiClient: (params) => {
+        const url = `${DataBaseUrl}/api/apiclient/authorize`;
+        return httpClient(url, {
+            method: 'PUT',
+            mode: 'cors',
+            body: JSON.stringify({
+                data: params.data
             })
         }).then(response => {
             return response.json;
@@ -202,6 +252,9 @@ export const dataProvider = {
     },
 
 };
+
+
+
 function getFilterContent(params: any) {
     if (typeof params.filter === "undefined" || params.filter === null) {
         return null;

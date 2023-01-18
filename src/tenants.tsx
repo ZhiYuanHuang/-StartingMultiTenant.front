@@ -1,7 +1,7 @@
 import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput } from "react-admin";
 
 const tenantFilters = [
-    <TextInput source="tenantIdentifier" label="Search" alwaysOn></TextInput>,
+    <TextInput source="tenantIdentifier" label="tenantIdentifier" alwaysOn></TextInput>,
     <ReferenceInput source="tenantDomain" label="Domain" reference="tenantDomain"></ReferenceInput>,
 ];
 
