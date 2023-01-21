@@ -14,11 +14,13 @@ import { DbInfoCreate, DbInfoList, DbInfoModify } from "./dbInfos";
 import { DbServerCreate, DbServerList, DbServerShow } from "./dbServers";
 import { CreateDbScriptCreate, CreateDbScriptList, CreateDbScriptShow } from "./createDbScripts";
 import { uploadFileProvider } from "./uploadFileProvider";
+import { SchemaUpdateScriptCreate, SchemaUpdateScriptList, SchemaUpdateScriptShow } from "./schemaupdatescripts";
 
 //const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
 
 const combineDataProvider = combineDataProviders((resource) => {
   switch (resource) {
+      case 'schemaupdatescript':
       case 'createDbScript':
         return uploadFileProvider;
       default:
@@ -34,7 +36,8 @@ const App = () => (
     <Resource name="serviceInfo" list={ServiceInfoList} create={ServiceInfoCreate} edit={ServiceInfoModify} recordRepresentation="identifier"></Resource>
     <Resource name="dbInfo" list={DbInfoList} create={DbInfoCreate} edit={DbInfoModify}></Resource>
     <Resource name="dbServer" list={DbServerList} create={DbServerCreate} show={DbServerShow} recordRepresentation={(record) => `${record.serverHost}:${record.serverPort}`}></Resource>
-    <Resource name="createDbScript" list={CreateDbScriptList} create={CreateDbScriptCreate} show={CreateDbScriptShow} recordRepresentation="name"></Resource>
+    <Resource name="createDbScript" list={CreateDbScriptList} create={CreateDbScriptCreate} show={CreateDbScriptShow} recordRepresentation={(record)=>`${record.name}(${record.majorVersion})`}></Resource>
+    <Resource name="schemaupdatescript" list={SchemaUpdateScriptList} create={SchemaUpdateScriptCreate} show={SchemaUpdateScriptShow}></Resource>
     <Resource name="tenantDomain" list={TenantDomainList} create={TenantDomainCreate} recordRepresentation="tenantDomain"></Resource>
     <Resource name="tenant" list={TenantList}></Resource>
     <CustomRoutes>

@@ -29,7 +29,7 @@ export const CreateDbScriptCreate = () => (
     <Create>
         <SimpleForm>
             <TextInput label="name" source="name"></TextInput>
-            <TextInput label="majorVersion" source="majorVersion"></TextInput>
+            {/* <TextInput label="majorVersion" source="majorVersion"></TextInput> */}
             <ReferenceInput label="serviceIdentifier" source="serviceInfoId" reference="serviceInfo">
                 <SelectInput />
             </ReferenceInput>

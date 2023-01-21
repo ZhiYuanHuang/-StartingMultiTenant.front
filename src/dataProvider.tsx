@@ -231,6 +231,25 @@ export const dataProvider = {
         //     });
         // });
     },
+    getRollBackScriptContent: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/GetRollBackScriptContent?scriptId=${params.id}`;
+
+        return fetch(url,{
+            method: 'GET',
+            mode: 'cors',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            })
+        }).then(response=>{
+            if(response.status!=200){
+                throw new Error(response.statusText);
+            }
+            return response.blob();
+        }).then(blob=>{
+            
+            return blob;
+        });
+    },
     authorizeApiClient: (params) => {
         const url = `${DataBaseUrl}/api/apiclient/authorize`;
         return httpClient(url, {
