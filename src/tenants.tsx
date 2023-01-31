@@ -17,11 +17,22 @@ export const TenantList = () => (
 
             <TextField source="tenantGuid"></TextField>
             <WrapperField>
+                <EditButton label="Modify"></EditButton>
                 <EditInternalDbConn />
                 <EditExternalDbConn />
             </WrapperField>
         </Datagrid>
     </List>
+);
+
+export const TenantCreateModify = () => (
+    <Edit>
+        <SimpleForm>
+            <TextInput source="tenantDomain" disabled></TextInput>
+            <TextInput source="tenantIdentifier" disabled></TextInput>
+            <CreateDbScriptInput isModify={true} source="createDbScriptIds" ></CreateDbScriptInput>
+        </SimpleForm>
+    </Edit>
 );
 
 export const TenantCreate = () => {
@@ -42,12 +53,13 @@ export const TenantCreate = () => {
 };
 
 export const CreateDbScriptInput=props=>{
-    
+    const {isModify}=props;
     var record = useRecordContext();
     var executedDbScriptIds: number[];
     if(record!=undefined || record!=null)
     {
         executedDbScriptIds=record.createDbScriptIds;
+        
     }
     
 
@@ -58,7 +70,7 @@ export const CreateDbScriptInput=props=>{
         () => dataProvider.getAll('createDbScript')
     );
 
-    if (isLoading) return <SelectArrayInput label="createDbScript" source="createDbScriptIds" choices={[]} disabled />;
+    if (isLoading) return <SelectArrayInput label="createDbScript" source={isModify?"newCreateDbScriptIds":"createDbScriptIds"}  choices={[]} disabled />;
     if (error) return null;
     if (!data) return null;
 
@@ -68,8 +80,7 @@ export const CreateDbScriptInput=props=>{
         }
        return { id: value.id, name: `${value.name} ${value.majorVersion}` };
     });
-    
-    return <SelectArrayInput label="createDbScript" source="createDbScriptIds" choices={choices} />;
+    return <SelectArrayInput label="createDbScript" source={isModify?"newCreateDbScriptIds":"createDbScriptIds"} choices={choices} />;
 };
 
 const EditExternalDbConn = (props) => {

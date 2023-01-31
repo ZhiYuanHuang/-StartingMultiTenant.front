@@ -6,7 +6,7 @@ import { PostEdit, PostList } from "./posts";
 import { Dashboard } from "./Dashboard";
 import authProvider from "./authProvider";
 import { dataProvider } from "./dataProvider";
-import { TenantCreate, TenantList } from "./tenants";
+import { TenantCreate, TenantCreateModify, TenantList } from "./tenants";
 import { TenantDomainCreate, TenantDomainList } from "./tenantDomains";
 import { ApiClientCreate, ApiClientList, ApiClientModifySecret, ApiClientAuthorize } from "./apiClients";
 import { ServiceInfoCreate, ServiceInfoList, ServiceInfoModify } from "./serviceInfos";
@@ -41,7 +41,7 @@ const App = () => (
     <Resource name="createDbScript" list={CreateDbScriptList} create={CreateDbScriptCreate} show={CreateDbScriptShow} recordRepresentation={(record) => `${record.name}(${record.majorVersion})`}></Resource>
     <Resource name="schemaupdatescript" list={SchemaUpdateScriptList} create={SchemaUpdateScriptCreate} show={SchemaUpdateScriptShow}></Resource>
     <Resource name="tenantDomain" list={TenantDomainList} create={TenantDomainCreate} recordRepresentation="tenantDomain"></Resource>
-    <Resource name="tenant" list={TenantList} create={TenantCreate}></Resource>
+    <Resource name="tenant" list={TenantList} create={TenantCreate} edit={TenantCreateModify}></Resource>
     <Resource name="externalDbConn" list={ExternalDbConnList} create={ExternalDbConnCreate} edit={ExternalDbConnModify} show={ExternalDbConnShow}></Resource>
     <Resource name="internalDbConn" show={InternalDbConnShow} />
     <CustomRoutes>
