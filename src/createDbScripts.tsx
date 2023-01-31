@@ -43,7 +43,7 @@ export const CreateDbScriptCreate = () => (
     </Create>
 );
 
-const DbInfoInput = props => {
+export const DbInfoInput = props => {
     const serviceInfoId = useWatch({ name: 'serviceInfoId' });
 
     const dataProvider = useDataProvider();
