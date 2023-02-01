@@ -196,6 +196,20 @@ export const dataProvider = {
             return { data: json.resultList };
         });
     },
+    getGroupCreateScript: (resource, params) => {
+        const url = `${DataBaseUrl}/api/createDbScript/GetAllGroup`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return { data: json.resultList };
+        });
+    },
     getDbInfoByService: (resource, params) => {
         const url = `${DataBaseUrl}/api/dbinfo/GetDbInfosByService?serviceInfoId=${params.id}`;
         return httpClient(url, {

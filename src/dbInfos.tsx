@@ -1,4 +1,4 @@
-import { Create, Datagrid, Edit, EditButton, List, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from "react-admin";
+import { Create, Datagrid, Edit, EditButton, List, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from "react-admin";
 
 const filters = [
     <TextInput source="name" label="name" alwaysOn></TextInput>,
@@ -11,6 +11,8 @@ export const DbInfoList = () => (
         <Datagrid>
             <TextField source="name"></TextField>
             <TextField source="identifier"></TextField>
+            <ReferenceField label="serviceIdentifier" source="serviceInfoId" reference="serviceInfo" />
+            
             <TextField source="description" sx={{ textOverflow: 'ellipsis' }}></TextField>
             <EditButton></EditButton>
         </Datagrid>

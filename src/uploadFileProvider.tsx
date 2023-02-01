@@ -21,7 +21,7 @@ export const uploadFileProvider = {
             if (params.data.updateScriptAttachments.rawFile instanceof File) {
                 newScripts.push(params.data.updateScriptAttachments);
             }
-            if (params.data.rollBackScriptAttachments.rawFile instanceof File) {
+            if (params.data.rollBackScriptAttachments!=undefined && params.data.rollBackScriptAttachments.rawFile instanceof File) {
                 newScripts.push(params.data.rollBackScriptAttachments);
             }
 

@@ -32,8 +32,6 @@ const combineDataProvider = combineDataProviders((resource) => {
 
 const App = () => (
   <Admin authProvider={authProvider} dataProvider={combineDataProvider}>
-    <Resource name="users" list={UserList} recordRepresentation="name"></Resource>
-    <Resource name="posts" list={PostList} edit={PostEdit}></Resource>
     <Resource name="apiClient" list={ApiClientList} create={ApiClientCreate} edit={ApiClientModifySecret}></Resource>
     <Resource name="serviceInfo" list={ServiceInfoList} create={ServiceInfoCreate} edit={ServiceInfoModify} recordRepresentation="identifier"></Resource>
     <Resource name="dbInfo" list={DbInfoList} create={DbInfoCreate} edit={DbInfoModify}></Resource>

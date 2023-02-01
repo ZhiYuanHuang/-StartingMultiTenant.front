@@ -1,8 +1,8 @@
-import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput } from "react-admin";
+import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput } from "react-admin";
 import { Link } from "react-router-dom";
 import * as React from 'react';
 import { Button } from '@mui/material';
-import { useQuery} from 'react-query';
+import { useQuery } from 'react-query';
 
 const tenantFilters = [
     <TextInput source="tenantIdentifier" label="tenantIdentifier" alwaysOn></TextInput>,
@@ -30,15 +30,35 @@ export const TenantCreateModify = () => (
         <SimpleForm>
             <TextInput source="tenantDomain" disabled></TextInput>
             <TextInput source="tenantIdentifier" disabled></TextInput>
-            <CreateDbScriptInput isModify={true} source="createDbScriptIds" ></CreateDbScriptInput>
+            <TextInput source="tenantGuid" disabled></TextInput>
+            {/* <CreateDbScriptInput isModify={true} source="createDbScriptIds" ></CreateDbScriptInput> */}
+            <CreateDbScriptInput2></CreateDbScriptInput2>
         </SimpleForm>
     </Edit>
 );
 
 export const TenantCreate = () => {
-    const testdata={
-        createDbScriptIds:[9,10]
+    const testdata = {
+        createDbScriptIds: [9, 10]
     };
+    const choice1 = [
+        { id: 1, name: "1" },
+        { id: 2, name: "2" },
+        { id: 3, name: "3" },
+    ];
+    const choice2 = [
+        { id: 4, name: "4" },
+        { id: 5, name: "5" },
+        { id: 6, name: "6" },
+    ];
+    const choice3 = [
+        { id: 7, name: "7" },
+        { id: 8, name: "8" },
+        { id: 9, name: "9" },
+    ];
+    const source1 = "testids.test1";
+    const source2 = "testids.test2";
+    const source3 = "testids.test3";
     return (
         <Create >
             <SimpleForm>
@@ -46,22 +66,24 @@ export const TenantCreate = () => {
                     <SelectInput />
                 </ReferenceInput>
                 <TextInput source="tenantIdentifier"></TextInput>
-                <CreateDbScriptInput source="createDbScriptIds" ></CreateDbScriptInput>
+                {/* <CreateDbScriptInput source="createDbScriptIds" ></CreateDbScriptInput> */}
+                <CreateDbScriptInput2></CreateDbScriptInput2>
+                {/* <SelectInput label="1" source={source1} choices={choice1}></SelectInput>
+                <SelectInput label="2" source={source2} choices={choice2}></SelectInput>
+                <SelectInput label="3" source={source3} choices={choice3}></SelectInput> */}
             </SimpleForm>
         </Create>
     );
 };
 
-export const CreateDbScriptInput=props=>{
-    const {isModify}=props;
+export const CreateDbScriptInput = props => {
+    const { isModify } = props;
     var record = useRecordContext();
     var executedDbScriptIds: number[];
-    if(record!=undefined || record!=null)
-    {
-        executedDbScriptIds=record.createDbScriptIds;
-        
+    if (record != undefined || record != null) {
+        executedDbScriptIds = record.createDbScriptIds;
     }
-    
+
 
     const dataProvider = useDataProvider();
 
@@ -70,17 +92,54 @@ export const CreateDbScriptInput=props=>{
         () => dataProvider.getAll('createDbScript')
     );
 
-    if (isLoading) return <SelectArrayInput label="createDbScript" source={isModify?"newCreateDbScriptIds":"createDbScriptIds"}  choices={[]} disabled />;
+    if (isLoading) return <SelectArrayInput label="createDbScript" source={isModify ? "newCreateDbScriptIds" : "createDbScriptIds"} choices={[]} disabled />;
     if (error) return null;
     if (!data) return null;
 
     const choices = data.data.map(value => {
-        if(executedDbScriptIds!=undefined && executedDbScriptIds.length>0 && executedDbScriptIds.indexOf(value.id)>-1){
-            return { id: value.id, name: `${value.name} ${value.majorVersion}(Created)`,disabled:true };
+        if (executedDbScriptIds != undefined && executedDbScriptIds.length > 0 && executedDbScriptIds.indexOf(value.id) > -1) {
+            return { id: value.id, name: `${value.name} ${value.majorVersion}(Created)`, disabled: true };
         }
-       return { id: value.id, name: `${value.name} ${value.majorVersion}` };
+        return { id: value.id, name: `${value.name} ${value.majorVersion}` };
     });
-    return <SelectArrayInput label="createDbScript" source={isModify?"newCreateDbScriptIds":"createDbScriptIds"} choices={choices} />;
+    return <SelectArrayInput label="createDbScript" source={isModify ? "newCreateDbScriptIds" : "createDbScriptIds"} choices={choices} />;
+};
+
+export const CreateDbScriptInput2 = props => {
+    const { isModify } = props;
+    var record = useRecordContext();
+    var executedDbScriptIds: number[];
+    if (record != undefined || record != null) {
+        executedDbScriptIds = record.createDbScriptIds;
+    }
+
+
+    const dataProvider = useDataProvider();
+
+    const { data, isLoading, error } = useQuery(
+        ['createDbScript', 'getGroupCreateScript'],
+        () => dataProvider.getGroupCreateScript('createDbScript')
+    );
+
+    if (isLoading) return null;
+    if (error) return null;
+    if (!data) return null;
+
+    const createDbs = "createDbs";
+    return data.data.map((item, index) => {
+        const source = `${createDbs}.${item.name}`;
+
+        const choices = item.versionScripts.map(value => {
+            if (executedDbScriptIds != undefined && executedDbScriptIds.length > 0 && executedDbScriptIds.indexOf(value.id) > -1) {
+                return { id: value.id, name: `${value.name} ${value.majorVersion}.${value.minorVersion}(Created)`, disabled: true };
+            }
+            return { id: value.id, name: `${value.name} ${value.majorVersion}.${value.minorVersion}` };
+        });
+
+        return (
+            <RadioButtonGroupInput label={`${item.name}(${item.serviceName}——${item.dbName})`} source={source} choices={choices} />
+        );
+    });
 };
 
 const EditExternalDbConn = (props) => {
