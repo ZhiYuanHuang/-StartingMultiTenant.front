@@ -5,6 +5,7 @@ import { Card } from "@mui/material";
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import * as React from 'react';
+import { ConnStrShow } from "./internalDbConns";
 
 const filters = [
     <ReferenceInput source="serviceIdentifier" label="serviceIdentifier" reference="serviceInfo" alwaysOn></ReferenceInput>,
@@ -89,13 +90,13 @@ export const TenantExternalDbConnList = (props) => {
 
     return (
         <List empty={false} actions={<ListActions tenantDomain={tenantDomain} tenantIdentifier={tenantIdentifier} />} resource="externalDbConn" filters={filters} filter={{ tenantDomain: tenantDomain, tenantIdentifier: tenantIdentifier }}>
-            <Datagrid>
+            <Datagrid  expand={<ConnStrShow source="dbConnStr" hasOverride={true}/>} >
                 <TextField source="tenantDomain"></TextField>
                 <TextField source="tenantIdentifier"></TextField>
                 <TextField source="serviceIdentifier"></TextField>
                 <TextField source="dbIdentifier"></TextField>
-                <TextField source="dbConnStr" sx={{ textOverflow: 'ellipsis' }}></TextField>
-                <TextField source="overrideDbConnStr" sx={{ textOverflow: 'ellipsis' }}></TextField>
+                {/* <TextField source="dbConnStr" sx={{ textOverflow: 'ellipsis' }}></TextField>
+                <TextField source="overrideDbConnStr" sx={{ textOverflow: 'ellipsis' }}></TextField> */}
                 <DateField source="updateTime" showTime />
                 <ShowButton></ShowButton>
                 <EditButton></EditButton>
