@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput } from "react-admin";
+import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput, TopToolbar, FilterButton, CreateButton } from "react-admin";
 import { Link } from "react-router-dom";
 import * as React from 'react';
 import { Button } from '@mui/material';
@@ -9,8 +9,19 @@ const tenantFilters = [
     <ReferenceInput source="tenantDomain" label="Domain" reference="tenantDomain"></ReferenceInput>,
 ];
 
+const ListActions = (props) => {
+    return (
+        <TopToolbar>
+            <FilterButton />
+            <CreateButton />
+            <SyncEnternalStore AllSync={true}></SyncEnternalStore>
+            <TriggerUpdateButton AllTrigger></TriggerUpdateButton>
+        </TopToolbar>
+    )
+};
+
 export const TenantList = () => (
-    <List filters={tenantFilters}>
+    <List actions={<ListActions></ListActions>} filters={tenantFilters}>
         <Datagrid>
             <TextField source="tenantIdentifier" />
             <TextField source="tenantDomain" />
@@ -20,6 +31,8 @@ export const TenantList = () => (
                 <EditButton label="Modify"></EditButton>
                 <EditInternalDbConn />
                 <EditExternalDbConn />
+                <SyncEnternalStore></SyncEnternalStore>
+                <TriggerUpdateButton></TriggerUpdateButton>
             </WrapperField>
         </Datagrid>
     </List>
@@ -177,4 +190,62 @@ const EditInternalDbConn = (props) => {
             internalDbConn
         </Button>
     );
+};
+
+const SyncEnternalStore = (props) => {
+    // var record = useRecordContext();
+
+    // return (
+    //     <Button
+    //         component={Link}
+    //         to={{
+    //             pathname: `/internalDbConn`,
+    //         }}
+    //         state={{ record: { tenantDomain: record.tenantDomain, tenantIdentifier: record.tenantIdentifier } }}
+    //     >
+    //         internalDbConn
+    //     </Button>
+    // );
+    const { AllSync } = props;
+    var record = useRecordContext();
+    const redirect = useRedirect();
+    const handleClick = () => {
+        if (AllSync) {
+            alert(`success batch`);
+        } else {
+            alert(`success ${record.id}`);
+        }
+
+    };
+
+    return (<Button onClick={handleClick}>{AllSync ? 'AllSyncToEnternalStore' : 'SyncToEnternalStore'}</Button>);
+};
+
+const TriggerUpdateButton = (props) => {
+    // var record = useRecordContext();
+
+    // return (
+    //     <Button
+    //         component={Link}
+    //         to={{
+    //             pathname: `/internalDbConn`,
+    //         }}
+    //         state={{ record: { tenantDomain: record.tenantDomain, tenantIdentifier: record.tenantIdentifier } }}
+    //     >
+    //         internalDbConn
+    //     </Button>
+    // );
+    const { AllTrigger } = props;
+    var record = useRecordContext();
+    const redirect = useRedirect();
+    const handleClick = () => {
+        if (AllTrigger) {
+            alert(`success batch`);
+        } else {
+            alert(`success ${record.id}`);
+        }
+
+    };
+
+    return (<Button onClick={handleClick}>{AllTrigger ? 'AllTriggerUpdate' : 'TriggerUpdate'}</Button>);
 };
