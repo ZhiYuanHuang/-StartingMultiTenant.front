@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput, TopToolbar, FilterButton, CreateButton } from "react-admin";
+import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput, TopToolbar, FilterButton, CreateButton, DateField, reactAdminFetchActions } from "react-admin";
 import { Link } from "react-router-dom";
 import * as React from 'react';
 import { Button } from '@mui/material';
@@ -25,8 +25,10 @@ export const TenantList = () => (
         <Datagrid>
             <TextField source="tenantIdentifier" />
             <TextField source="tenantDomain" />
-
-            <TextField source="tenantGuid"></TextField>
+            <TextField source="tenantName"></TextField>
+            {/* <TextField source="tenantGuid"></TextField> */}
+            <DateField source="createTime" showTime></DateField>
+            <DateField source="updateTime" showTime></DateField>
             <WrapperField>
                 <EditButton label="Modify"></EditButton>
                 <EditInternalDbConn />
@@ -44,6 +46,8 @@ export const TenantCreateModify = () => (
             <TextInput source="tenantDomain" disabled></TextInput>
             <TextInput source="tenantIdentifier" disabled></TextInput>
             <TextInput source="tenantGuid" disabled></TextInput>
+            <TextInput source="tenantName"></TextInput>
+            <TextInput source="description"></TextInput>
             {/* <CreateDbScriptInput isModify={true} source="createDbScriptIds" ></CreateDbScriptInput> */}
             <CreateDbScriptInput2></CreateDbScriptInput2>
         </SimpleForm>
@@ -51,6 +55,7 @@ export const TenantCreateModify = () => (
 );
 
 export const TenantCreate = () => {
+
     const testdata = {
         createDbScriptIds: [9, 10]
     };
@@ -79,6 +84,9 @@ export const TenantCreate = () => {
                     <SelectInput />
                 </ReferenceInput>
                 <TextInput source="tenantIdentifier"></TextInput>
+                <TextInput source="tenantName"></TextInput>
+                <TextInput source="description"></TextInput>
+                
                 {/* <CreateDbScriptInput source="createDbScriptIds" ></CreateDbScriptInput> */}
                 <CreateDbScriptInput2></CreateDbScriptInput2>
                 {/* <SelectInput label="1" source={source1} choices={choice1}></SelectInput>
@@ -88,6 +96,18 @@ export const TenantCreate = () => {
         </Create>
     );
 };
+
+class TestCustomComponent extends React.Component {
+    componentDidMount(): void {
+        console.info("testest");
+    }
+
+    render() {
+        return (
+            <TextInput source="trytry"></TextInput>
+        );
+    }
+}
 
 export const CreateDbScriptInput = props => {
     const { isModify } = props;
@@ -150,7 +170,7 @@ export const CreateDbScriptInput2 = props => {
         });
 
         return (
-            <RadioButtonGroupInput label={`${item.name}(${item.serviceName}——${item.dbName})`} source={source} choices={choices} />
+            <RadioButtonGroupInput key={source} label={`${item.name}(${item.serviceName}——${item.dbName})`} source={source} choices={choices} />
         );
     });
 };
@@ -249,3 +269,4 @@ const TriggerUpdateButton = (props) => {
 
     return (<Button onClick={handleClick}>{AllTrigger ? 'AllTriggerUpdate' : 'TriggerUpdate'}</Button>);
 };
+
