@@ -14,7 +14,7 @@ import { DbInfoCreate, DbInfoList, DbInfoModify } from "./dbInfos";
 import { DbServerCreate, DbServerList, DbServerShow } from "./dbServers";
 import { CreateDbScriptCreate, CreateDbScriptList, CreateDbScriptShow } from "./createDbScripts";
 import { uploadFileProvider } from "./uploadFileProvider";
-import { SchemaUpdateScriptCreate, SchemaUpdateScriptList, SchemaUpdateScriptShow } from "./schemaupdatescripts";
+import { SchemaUpdateScriptCreate, SchemaUpdateScriptExecute, SchemaUpdateScriptList, SchemaUpdateScriptShow } from "./schemaupdatescripts";
 import { ExternalDbConnCreate, ExternalDbConnList, ExternalDbConnModify, ExternalDbConnShow, TenantExternalDbConnCreate, TenantExternalDbConnList } from "./externalDbConns";
 import { InternalDbConnShow, TenantInternalDbConnList } from "./internalDbConns";
 
@@ -47,6 +47,7 @@ const App = () => (
       {/* <Route path="/externalDbConn/:tenantDomain/:tenantIdentifier" element={<TenantExternalDbConnList />} /> */}
       <Route path="/internalDbConn" element={<TenantInternalDbConnList />} />
       <Route path="/externalDbConn/create" element={<TenantExternalDbConnCreate />} />
+      <Route path="/schemaupdatescript/execute" element={<SchemaUpdateScriptExecute></SchemaUpdateScriptExecute>}></Route>
     </CustomRoutes>
   </Admin>
 )

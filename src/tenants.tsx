@@ -97,17 +97,6 @@ export const TenantCreate = () => {
     );
 };
 
-class TestCustomComponent extends React.Component {
-    componentDidMount(): void {
-        console.info("testest");
-    }
-
-    render() {
-        return (
-            <TextInput source="trytry"></TextInput>
-        );
-    }
-}
 
 export const CreateDbScriptInput = props => {
     const { isModify } = props;

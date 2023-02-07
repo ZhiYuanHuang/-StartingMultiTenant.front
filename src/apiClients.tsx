@@ -1,5 +1,5 @@
 import { List, Datagrid, TextField, TextInput, SimpleForm, Create, PasswordInput, Edit, EditButton, useRecordContext, FunctionField, WrapperField, Button, CustomRoutes, Resource, Admin, Title, useRedirect, EditBase, SelectInput, RecordContextProvider, useGetOne, useDataProvider, Loading, Error, SelectArrayInput, useNotify, useUpdate } from 'react-admin';
-import { Route, useParams,useNavigate } from "react-router-dom";
+import { Route, useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation } from 'react-query';
 import { TenantList } from './tenants';
 import { Card, CardContent } from '@mui/material';
@@ -57,18 +57,18 @@ export const ApiClientAuthorize = () => {
         () => dataProvider.getApiClientScopes('apiclient', { id: id })
     );
 
-    const {mutate, isLoading: isSubmitting } = useMutation(
+    const { mutate, isLoading: isSubmitting } = useMutation(
         //['authorizeApiClient', { id: id }],
-         (formData)=>dataProvider.authorizeApiClient(formData)
+        (formData) => dataProvider.authorizeApiClient(formData)
     );
-//     const [update, { isLoading: isSubmitting }] = useUpdate();
-  const navigate = useNavigate();
-  const onSubmit = (formData) => {
-    mutate(
-        {data:formData},
-        { onSuccess: () => { navigate('/apiclient'); } }
-    );
-  };
+    //     const [update, { isLoading: isSubmitting }] = useUpdate();
+    const navigate = useNavigate();
+    const onSubmit = (formData) => {
+        mutate(
+            { data: formData },
+            { onSuccess: () => { navigate('/apiclient'); } }
+        );
+    };
 
     // const { mutate  } = useMutation(
     //     ['authorizeApiClient', { ...data.data }],
@@ -81,7 +81,7 @@ export const ApiClientAuthorize = () => {
 
     //const { data, isLoading, error } = useGetOne('apiclient', { id });
     //const navigate = useNavigate();
-    
+
     return (
         <div>
             <Title title="ApiClient Authorize" />
