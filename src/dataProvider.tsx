@@ -297,6 +297,30 @@ export const dataProvider = {
             };
         });
     },
+    syncToExternalStore: (params) => {
+        const url = `${DataBaseUrl}/api/tenant/SyncToExternalStore?id=${params.id}`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+           
+            return json;
+        });
+    },
+    fullSyncToExternalStore: () => {
+        const url = `${DataBaseUrl}/api/tenant/fullSyncToExternalStore`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+           
+            return json;
+        });
+    },
 
 };
 

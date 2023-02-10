@@ -6,7 +6,7 @@ import { PostEdit, PostList } from "./posts";
 import { Dashboard } from "./Dashboard";
 import authProvider from "./authProvider";
 import { dataProvider } from "./dataProvider";
-import { TenantCreate, TenantCreateModify, TenantList } from "./tenants";
+import { BatchExecuteTask, TenantCreate, TenantCreateModify, TenantList } from "./tenants";
 import { TenantDomainCreate, TenantDomainList } from "./tenantDomains";
 import { ApiClientCreate, ApiClientList, ApiClientModifySecret, ApiClientAuthorize } from "./apiClients";
 import { ServiceInfoCreate, ServiceInfoList, ServiceInfoModify } from "./serviceInfos";
@@ -44,7 +44,7 @@ const App = () => (
     <Resource name="internalDbConn" show={InternalDbConnShow} />
     <CustomRoutes>
       <Route path="/clientAuthorize/:id" element={<ApiClientAuthorize />} />
-      {/* <Route path="/externalDbConn/:tenantDomain/:tenantIdentifier" element={<TenantExternalDbConnList />} /> */}
+      <Route path="/batchExecute" element={<BatchExecuteTask />}></Route>
       <Route path="/internalDbConn" element={<TenantInternalDbConnList />} />
       <Route path="/externalDbConn/create" element={<TenantExternalDbConnCreate />} />
       <Route path="/schemaupdatescript/execute" element={<SchemaUpdateScriptExecute></SchemaUpdateScriptExecute>}></Route>

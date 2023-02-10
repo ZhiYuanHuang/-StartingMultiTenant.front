@@ -1,8 +1,11 @@
-import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput, TopToolbar, FilterButton, CreateButton, DateField, reactAdminFetchActions } from "react-admin";
-import { Link } from "react-router-dom";
+import { List, Datagrid, TextField, ReferenceField, EditButton, Edit, SimpleForm, ReferenceInput, TextInput, WrapperField, useRecordContext, useRedirect, Create, SelectInput, useDataProvider, CheckboxGroupInput, SelectArrayInput, RadioButtonGroupInput, TopToolbar, FilterButton, CreateButton, DateField, reactAdminFetchActions, Loading, useNotify, LinearProgress, Confirm } from "react-admin";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 import * as React from 'react';
 import { Button } from '@mui/material';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
+import { useState } from "react";
+import { appResponseDto } from "./generalClass";
+import { DataBaseUrl } from "./dataProvider";
 
 const tenantFilters = [
     <TextInput source="tenantIdentifier" label="tenantIdentifier" alwaysOn></TextInput>,
@@ -14,7 +17,15 @@ const ListActions = (props) => {
         <TopToolbar>
             <FilterButton />
             <CreateButton />
-            <SyncEnternalStore AllSync={true}></SyncEnternalStore>
+            <Button
+                component={Link}
+                to={{
+                    pathname: `/batchExecute`,
+                }}
+                state={{ record: { TaskType: "syncExecuteStore" } }}
+            >
+                BatchSyncEnternalStore
+            </Button>
             <TriggerUpdateButton AllTrigger></TriggerUpdateButton>
         </TopToolbar>
     )
@@ -33,8 +44,9 @@ export const TenantList = () => (
                 <EditButton label="Modify"></EditButton>
                 <EditInternalDbConn />
                 <EditExternalDbConn />
-                <SyncEnternalStore></SyncEnternalStore>
                 <TriggerUpdateButton></TriggerUpdateButton>
+                <SyncEnternalStore></SyncEnternalStore>
+
             </WrapperField>
         </Datagrid>
     </List>
@@ -86,7 +98,7 @@ export const TenantCreate = () => {
                 <TextInput source="tenantIdentifier"></TextInput>
                 <TextInput source="tenantName"></TextInput>
                 <TextInput source="description"></TextInput>
-                
+
                 {/* <CreateDbScriptInput source="createDbScriptIds" ></CreateDbScriptInput> */}
                 <CreateDbScriptInput2></CreateDbScriptInput2>
                 {/* <SelectInput label="1" source={source1} choices={choice1}></SelectInput>
@@ -202,32 +214,117 @@ const EditInternalDbConn = (props) => {
 };
 
 const SyncEnternalStore = (props) => {
-    // var record = useRecordContext();
-
-    // return (
-    //     <Button
-    //         component={Link}
-    //         to={{
-    //             pathname: `/internalDbConn`,
-    //         }}
-    //         state={{ record: { tenantDomain: record.tenantDomain, tenantIdentifier: record.tenantIdentifier } }}
-    //     >
-    //         internalDbConn
-    //     </Button>
-    // );
-    const { AllSync } = props;
     var record = useRecordContext();
-    const redirect = useRedirect();
-    const handleClick = () => {
-        if (AllSync) {
-            alert(`success batch`);
-        } else {
-            alert(`success ${record.id}`);
-        }
 
+    const dataProvider = useDataProvider();
+    const [loading, setLoading] = useState(false);
+    const notify = useNotify();
+
+    if (loading) {
+        return (<LinearProgress />)
+    }
+
+    const handleClick = () => {
+        setLoading(true);
+
+        dataProvider.syncToExternalStore(record)
+            .then((json: appResponseDto) => {
+                if (json.errorCode == 0) {
+                    notify('success');
+                }
+                else {
+                    notify('error');
+                }
+            })
+            .catch((e) => {
+                notify('Error', { type: 'error' })
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
-    return (<Button onClick={handleClick}>{AllSync ? 'AllSyncToEnternalStore' : 'SyncToEnternalStore'}</Button>);
+    return (<Button onClick={handleClick}>SyncToEnternalStore</Button>);
+};
+
+export const BatchExecuteTask = (props) => {
+    let location = useLocation();
+    const redirect = useRedirect();
+    console.log(location.state);
+    const [record] = useState(location.state);
+    const [open, setOpen] = useState(true);
+    //const [loading, setLoading] = useState(true);
+    const notify = useNotify();
+    const dataProvider = useDataProvider();
+
+    if (record == null) {
+        redirect('tenant');
+    }
+
+    const { mutate, isLoading, isError } = useMutation(
+        ['tenant', 'fullOpera', { id:record.record.TaskType }],
+        () => dataProvider.fullSyncToExternalStore()
+            // dataProvider.fullSyncToExternalStore()
+            //         .then((json: appResponseDto) => {
+            //             if (json.errorCode == 0) {
+            //                 notify('success');
+            //             }
+            //             else {
+            //                 notify('error');
+            //             }
+            //         })
+            //         .catch(() => {
+            //             notify('Error', { type: 'error' })
+            //         })
+            //         .finally(() => {
+            //             // setLoading(false);
+            //             redirect('list', 'tenant');
+            //         });
+
+            
+        
+    );
+
+    if (isLoading) {
+        return <Loading />
+    }
+    if (isError) {
+        return <Error></Error>
+    }
+
+
+    const handleDialogClose = () => {
+        setOpen(false);
+
+        redirect('list', 'tenant');
+    };
+    const handleConfirm = () => {
+        mutate(null,{
+            onSuccess:()=>{
+                notify('success');
+                redirect('list', 'tenant');
+            },
+            onError:()=>{
+                notify('error');
+                redirect('list', 'tenant');
+            }
+        });
+        setOpen(false);
+    };
+
+    return (
+        <div>
+            
+            <Confirm 
+                isOpen={open}
+                
+                title="Full Sync To ExternalStore"
+                content="Are you sure you want to full sync to externalStore?"
+                onConfirm={handleConfirm}
+                onClose={handleDialogClose}
+            />
+        </div>
+    );
 };
 
 const TriggerUpdateButton = (props) => {
