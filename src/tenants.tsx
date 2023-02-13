@@ -22,11 +22,19 @@ const ListActions = (props) => {
                 to={{
                     pathname: `/batchExecute`,
                 }}
-                state={{ record: { TaskType: "syncExecuteStore" } }}
+                state={{ record: { TaskType: "fullSyncToExternalStore" } }}
             >
                 BatchSyncEnternalStore
             </Button>
-            <TriggerUpdateButton AllTrigger></TriggerUpdateButton>
+            <Button
+                component={Link}
+                to={{
+                    pathname: `/batchExecute`,
+                }}
+                state={{ record: { TaskType: "TriggerAllClear" } }}
+            >
+                TriggerAllClear
+            </Button>
         </TopToolbar>
     )
 };
@@ -44,7 +52,7 @@ export const TenantList = () => (
                 <EditButton label="Modify"></EditButton>
                 <EditInternalDbConn />
                 <EditExternalDbConn />
-                <TriggerUpdateButton></TriggerUpdateButton>
+                <TriggerModifyButton></TriggerModifyButton>
                 <SyncEnternalStore></SyncEnternalStore>
 
             </WrapperField>
@@ -253,7 +261,6 @@ export const BatchExecuteTask = (props) => {
     console.log(location.state);
     const [record] = useState(location.state);
     const [open, setOpen] = useState(true);
-    //const [loading, setLoading] = useState(true);
     const notify = useNotify();
     const dataProvider = useDataProvider();
 
@@ -262,27 +269,8 @@ export const BatchExecuteTask = (props) => {
     }
 
     const { mutate, isLoading, isError } = useMutation(
-        ['tenant', 'fullOpera', { id:record.record.TaskType }],
-        () => dataProvider.fullSyncToExternalStore()
-            // dataProvider.fullSyncToExternalStore()
-            //         .then((json: appResponseDto) => {
-            //             if (json.errorCode == 0) {
-            //                 notify('success');
-            //             }
-            //             else {
-            //                 notify('error');
-            //             }
-            //         })
-            //         .catch(() => {
-            //             notify('Error', { type: 'error' })
-            //         })
-            //         .finally(() => {
-            //             // setLoading(false);
-            //             redirect('list', 'tenant');
-            //         });
-
-            
-        
+        ['tenant', 'fullTask', { id: record.record.TaskType }],
+        () => dataProvider.fullExecute(record.record)
     );
 
     if (isLoading) {
@@ -299,12 +287,12 @@ export const BatchExecuteTask = (props) => {
         redirect('list', 'tenant');
     };
     const handleConfirm = () => {
-        mutate(null,{
-            onSuccess:()=>{
+        mutate(null, {
+            onSuccess: () => {
                 notify('success');
                 redirect('list', 'tenant');
             },
-            onError:()=>{
+            onError: () => {
                 notify('error');
                 redirect('list', 'tenant');
             }
@@ -314,12 +302,10 @@ export const BatchExecuteTask = (props) => {
 
     return (
         <div>
-            
-            <Confirm 
+            <Confirm
                 isOpen={open}
-                
-                title="Full Sync To ExternalStore"
-                content="Are you sure you want to full sync to externalStore?"
+                title={record.record.TaskType=="fullSyncToExternalStore"? "Full Sync To ExternalStore":"FullTriggerModify"}
+                content="Are you sure you want to full execute?"
                 onConfirm={handleConfirm}
                 onClose={handleDialogClose}
             />
@@ -327,32 +313,37 @@ export const BatchExecuteTask = (props) => {
     );
 };
 
-const TriggerUpdateButton = (props) => {
-    // var record = useRecordContext();
-
-    // return (
-    //     <Button
-    //         component={Link}
-    //         to={{
-    //             pathname: `/internalDbConn`,
-    //         }}
-    //         state={{ record: { tenantDomain: record.tenantDomain, tenantIdentifier: record.tenantIdentifier } }}
-    //     >
-    //         internalDbConn
-    //     </Button>
-    // );
-    const { AllTrigger } = props;
+const TriggerModifyButton = (props) => {
     var record = useRecordContext();
-    const redirect = useRedirect();
-    const handleClick = () => {
-        if (AllTrigger) {
-            alert(`success batch`);
-        } else {
-            alert(`success ${record.id}`);
-        }
 
+    const dataProvider = useDataProvider();
+    const [loading, setLoading] = useState(false);
+    const notify = useNotify();
+
+    if (loading) {
+        return (<LinearProgress />)
+    }
+
+    const handleClick = () => {
+        setLoading(true);
+
+        dataProvider.triggerDbConnsModify(record)
+            .then((json: appResponseDto) => {
+                if (json.errorCode == 0) {
+                    notify('success');
+                }
+                else {
+                    notify('error');
+                }
+            })
+            .catch((e) => {
+                notify('Error', { type: 'error' })
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
-    return (<Button onClick={handleClick}>{AllTrigger ? 'AllTriggerUpdate' : 'TriggerUpdate'}</Button>);
+    return (<Button onClick={handleClick}>TriggerModify</Button>);
 };
 

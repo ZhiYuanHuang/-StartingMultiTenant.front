@@ -309,8 +309,8 @@ export const dataProvider = {
             return json;
         });
     },
-    fullSyncToExternalStore: () => {
-        const url = `${DataBaseUrl}/api/tenant/fullSyncToExternalStore`;
+    triggerDbConnsModify: (params) => {
+        const url = `${DataBaseUrl}/api/tenant/TriggerDbConnsModify?id=${params.id}`;
         return httpClient(url, {
             method: 'GET',
             mode: 'cors',
@@ -321,7 +321,51 @@ export const dataProvider = {
             return json;
         });
     },
-
+    fullExecute: (params) => {
+        const url = `${DataBaseUrl}/api/tenant/${params.TaskType}`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+           
+            return json;
+        });
+    },
+    getStatRef: (resource, params) => {
+        const url = `${DataBaseUrl}/api/${resource}/GetStatRef?id=${params.id}`;
+        return httpClient(url, {
+            method: 'GET',
+            mode: 'cors',
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return { data: json.result };
+        });
+    },
+    exchangeDbServer: (params) => {
+        const url = `${DataBaseUrl}/api/dbserver/ExchangeDbServer`;
+        return httpClient(url, {
+            method: 'PUT',
+            mode: 'cors',
+            body: JSON.stringify({
+                data: params.data
+            })
+        }).then(response => {
+            return response.json;
+        }).then((json: appResponseDto) => {
+            if (json.errorCode != 0) {
+                throw new Error(json.errorMsg);
+            }
+            return {
+                data: json.result
+            };
+        });
+    },
 };
 
 

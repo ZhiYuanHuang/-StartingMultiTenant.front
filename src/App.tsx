@@ -11,7 +11,7 @@ import { TenantDomainCreate, TenantDomainList } from "./tenantDomains";
 import { ApiClientCreate, ApiClientList, ApiClientModifySecret, ApiClientAuthorize } from "./apiClients";
 import { ServiceInfoCreate, ServiceInfoList, ServiceInfoModify } from "./serviceInfos";
 import { DbInfoCreate, DbInfoList, DbInfoModify } from "./dbInfos";
-import { DbServerCreate, DbServerList, DbServerShow } from "./dbServers";
+import { DbServerCreate, DbServerExchange, DbServerList, DbServerShow } from "./dbServers";
 import { CreateDbScriptCreate, CreateDbScriptList, CreateDbScriptShow } from "./createDbScripts";
 import { uploadFileProvider } from "./uploadFileProvider";
 import { SchemaUpdateScriptCreate, SchemaUpdateScriptExecute, SchemaUpdateScriptList, SchemaUpdateScriptShow } from "./schemaupdatescripts";
@@ -44,6 +44,7 @@ const App = () => (
     <Resource name="internalDbConn" show={InternalDbConnShow} />
     <CustomRoutes>
       <Route path="/clientAuthorize/:id" element={<ApiClientAuthorize />} />
+      <Route path="/dbserverExchange/:id" element={<DbServerExchange />} />
       <Route path="/batchExecute" element={<BatchExecuteTask />}></Route>
       <Route path="/internalDbConn" element={<TenantInternalDbConnList />} />
       <Route path="/externalDbConn/create" element={<TenantExternalDbConnCreate />} />
