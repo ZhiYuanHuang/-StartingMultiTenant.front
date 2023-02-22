@@ -11,7 +11,7 @@ import { TenantDomainCreate, TenantDomainList } from "./tenantDomains";
 import { ApiClientCreate, ApiClientList, ApiClientModifySecret, ApiClientAuthorize } from "./apiClients";
 import { ServiceInfoCreate, ServiceInfoList, ServiceInfoModify } from "./serviceInfos";
 import { DbInfoCreate, DbInfoList, DbInfoModify } from "./dbInfos";
-import { DbServerCreate, DbServerExchange, DbServerList, DbServerShow } from "./dbServers";
+import { DbServerCreate, DbServerEdit, DbServerExchange, DbServerList, DbServerShow } from "./dbServers";
 import { CreateDbScriptCreate, CreateDbScriptList, CreateDbScriptShow } from "./createDbScripts";
 import { uploadFileProvider } from "./uploadFileProvider";
 import { SchemaUpdateScriptCreate, SchemaUpdateScriptExecute, SchemaUpdateScriptList, SchemaUpdateScriptShow } from "./schemaupdatescripts";
@@ -35,7 +35,7 @@ const App = () => (
     <Resource name="apiClient" list={ApiClientList} create={ApiClientCreate} edit={ApiClientModifySecret}></Resource>
     <Resource name="serviceInfo" list={ServiceInfoList} create={ServiceInfoCreate} edit={ServiceInfoModify} recordRepresentation="identifier"></Resource>
     <Resource name="dbInfo" list={DbInfoList} create={DbInfoCreate} edit={DbInfoModify}></Resource>
-    <Resource name="dbServer" list={DbServerList} create={DbServerCreate} show={DbServerShow} recordRepresentation={(record) => `${record.dbType==0?"Postgres":"Mysql"}-${record.serverHost}:${record.serverPort}`}></Resource>
+    <Resource name="dbServer" list={DbServerList} create={DbServerCreate} show={DbServerShow} edit={DbServerEdit} recordRepresentation={(record) => `${record.dbType==0?"Postgres":"Mysql"}-${record.serverHost}:${record.serverPort}`}></Resource>
     <Resource name="createDbScript" list={CreateDbScriptList} create={CreateDbScriptCreate} show={CreateDbScriptShow} recordRepresentation={(record) => `${record.name}(${record.majorVersion})`}></Resource>
     <Resource name="schemaupdatescript" list={SchemaUpdateScriptList} create={SchemaUpdateScriptCreate} show={SchemaUpdateScriptShow}></Resource>
     <Resource name="tenantDomain" list={TenantDomainList} create={TenantDomainCreate} recordRepresentation="tenantDomain"></Resource>
