@@ -1,4 +1,4 @@
-import { BooleanField, BooleanInput, Create, Datagrid, List, SelectField, SelectInput, Show, ShowButton, SimpleForm, SimpleShowLayout, TextField, TextInput, Title, useDataProvider, Loading, RecordContextProvider, ReferenceField, NumberField, Button, useRecordContext, useRedirect, ReferenceInput, useNotify, Confirm, EditButton } from "react-admin";
+import { BooleanField, BooleanInput, Create, Datagrid, List, SelectField, SelectInput, Show, ShowButton, SimpleForm, SimpleShowLayout, TextField, TextInput, Title, useDataProvider, Loading, RecordContextProvider, ReferenceField, NumberField, Button, useRecordContext, useRedirect, ReferenceInput, useNotify, Confirm, EditButton, Edit } from "react-admin";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from '@mui/material';
 import { useQuery, useMutation } from 'react-query';
@@ -48,7 +48,7 @@ export const DbServerCreate = () => (
 );
 
 export const DbServerEdit = () => (
-    <Create>
+    <Edit>
         <SimpleForm>
             <SelectInput source="dbType" choices={DbTypeChoices} disabled/>
             <TextInput source="serverHost" disabled></TextInput>
@@ -57,7 +57,7 @@ export const DbServerEdit = () => (
             <TextInput source="userPwd" disabled></TextInput>
             <BooleanInput label="CanCreateNew" source="canCreateNew" />
         </SimpleForm>
-    </Create>
+    </Edit>
 );
 
 export const DbServerShow = () => (
