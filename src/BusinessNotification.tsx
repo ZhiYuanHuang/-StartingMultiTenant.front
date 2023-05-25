@@ -8,7 +8,7 @@ import Container from '@mui/material/Container';
 import { Button } from '@mui/material';
 
 const envLists = import.meta.env
-export const DataBaseUrl = envLists.VITE_dataBaseUrl
+export const DataBaseUrl = envLists.VITE_signalRUrl
 
 interface NotifyDataDto {
     scriptId: number,
